@@ -5,13 +5,14 @@ import sendResponse from "../../utils/sendResponse";
 import { AnimalService } from "./animal.service";
 
 const getAnimals = catchAsync(async (req, res) => {
-  const result = await AnimalService.getAnimals();
+  const result = await AnimalService.getAnimals(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Animals retrieved",
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 const createAnimal = catchAsync(async (req, res) => {

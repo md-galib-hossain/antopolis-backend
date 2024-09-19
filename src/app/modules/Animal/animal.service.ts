@@ -3,10 +3,18 @@ import AppError from "../../errors/App.Error";
 import { IAnimal } from "./animal.interface";
 import { Animal } from "./animal.model";
 import { Category } from "../Category/category.model";
+import { TMeta } from "../../utils/sendResponse";
+import QueryBuilder from "../../builder/QueryBuilder";
 
-const getAnimals = async (): Promise<IAnimal[]> => {
-  const result = await Animal.find();
-  return result;
+const getAnimals = async (query: Record<string,unknown>): Promise<{meta: TMeta,result: IAnimal[]}> => {
+  
+  const animalQuery = new QueryBuilder(Animal.find(),query).search(["name"]).filter().sort().paginate().fields()
+    const result = await animalQuery.modelQuery;
+    const meta = await animalQuery.countTotal();
+  return {
+    meta,
+    result,
+  };
 };
 const createAnimal = async (payload: Partial<IAnimal>): Promise<IAnimal> => {
   const existsName = await Animal.findOne({ name: payload.name });
