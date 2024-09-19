@@ -1,36 +1,30 @@
 import { Request, Response } from "express";
 import { CategoryService } from "./category.service";
 import httpStatus from "http-status";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 
-const getCategories = async (req: Request, res: Response) => {
-  try {
-    const result = await CategoryService.getCategories();
-    res.json({
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Categories retrieved",
-        data: result
-    })
-  } catch (error) {
-      console.log(error);
-    throw new Error("Couldn't get categories");
-  }
-};
-const createCategory = async (req: Request, res: Response) => {
-  try {
-    const result = await CategoryService.createCategory(req.body);
-    res.json({
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: "Category created",
-        data: result
-    })
-  } catch (error) {
-      console.log(error);
-    throw new Error("Couldn't get categories");
-  }
-};
+const getCategories = catchAsync(async (req, res) => {
+  const result = await CategoryService.getCategories();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Categories retrieved",
+    data: result,
+  });
+});
+const createCategory = catchAsync(async (req, res) => {
+  const result = await CategoryService.createCategory(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Category created",
+    data: result,
+  });
+});
 
 export const CategoryController = {
-  getCategories,createCategory
+  getCategories,
+  createCategory,
 };
